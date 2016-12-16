@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DAL;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -10,10 +11,58 @@ namespace WebApplication.Controllers
 {
     public class ValuesController : ApiController
     {
-        [HttpPost]
-        public void Post([FromBody]ToDo todo)
-        {
+        private ToDoRepository _todoRepository = new ToDoRepository();
 
+        [HttpPost]
+        public IHttpActionResult Post([FromBody]ToDoModel todo)
+        {
+            todo.CreationDate = DateTime.Now;
+            bool addResult = false;
+            if (ModelState.IsValid)
+            {
+                addResult = _todoRepository.Create(todo.ToOrmToDo());
+                if (!addResult)
+                {
+                    return Ok(HttpStatusCode.InternalServerError);
+                }
+            }
+            
+            return Ok();
+        }
+
+        [HttpGet]
+        public IHttpActionResult GetAll() => Ok(_todoRepository.GetAll());
+
+        [HttpGet]
+        public IHttpActionResult Get(int id)
+        {
+            return Ok(_todoRepository.Get(id));
+        }
+
+        [HttpDelete]
+        public IHttpActionResult Remove(int id)
+        {
+            bool removeResult = _todoRepository.Remove(id);
+            if (!removeResult)
+            {
+                return NotFound();
+            }
+
+            return Ok();
+        }
+
+        [HttpPut]
+        public IHttpActionResult Update([FromBody]ToDoModel todo)
+        {
+            if (ModelState.IsValid)
+            {
+                bool updateResult = _todoRepository.Update(todo.ToOrmToDo());
+                if (!updateResult)
+                {
+                    return Ok(HttpStatusCode.BadRequest);
+                }                
+            }
+            return Ok();
         }
     }
 }
