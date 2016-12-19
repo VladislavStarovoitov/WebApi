@@ -10,6 +10,16 @@
 </head>
 <body>
     <div class="container body-content">
+        <ul class="nav navbar-nav navbar-right">
+            @if (!User.Identity.IsAuthenticated)
+            {
+                <li>@Html.ActionLink("Log In", "Login", "Account")</li>
+            }
+            else
+            {
+                <li>@Html.ActionLink("Log Out", "Logout", "Account")</li>
+            }
+        </ul>
         @RenderBody()
     </div>
 

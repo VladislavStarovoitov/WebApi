@@ -33,8 +33,8 @@
     $scope.getAll = function () {
         repository.getAll().success(function (response) {
             $scope.todos = [];
-            var a = Array.of(response);
-            response.forEach(function (element, index, array) {
+            var jsonArray = JSON.parse(response);
+            jsonArray.forEach(function (element, index, array) {
                 $scope.todos.push(new ToDo(element));
             })
         });
@@ -43,8 +43,9 @@
     $scope.get = function (id) {
         $scope.todos = [];
         repository.get(id).success(function (response) {
-            $scope.todos.push(new ToDo(response));
-            $scope.todo = new ToDo(response);
+            var json = JSON.parse(response);
+            $scope.todos.push(new ToDo(json));
+            $scope.todo = new ToDo(json);
             $scope.updateShow = true;
         })
         $scope.id = "";

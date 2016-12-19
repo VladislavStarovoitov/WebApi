@@ -57,7 +57,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Identity\UserManager.cs" />
+    <Compile Include="Identity\AppUserManager.cs" />
     <Compile Include="Repositories\ToDoManager.cs" />
     <Compile Include="IRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

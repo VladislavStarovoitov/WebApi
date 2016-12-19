@@ -1,5 +1,8 @@
-﻿using System;
+﻿using ORM;
+using ORM.Contexts;
+using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Web;
 using System.Web.Http;
@@ -13,6 +16,8 @@ namespace WebApplication
     {
         protected void Application_Start()
         {
+            Database.SetInitializer(new AppDbInitializer());
+
             GlobalConfiguration.Configure(WebApiConfig.Register);
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
