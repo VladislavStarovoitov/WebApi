@@ -8,9 +8,14 @@ using System.Data.Entity;
 
 namespace DAL
 {
-    public class ToDoRepository : IRepository<ToDo>
+    public class ToDoManager : IDisposable
     {
-        private ToDoContext _dataBase = new ToDoContext();
+        private ToDoContext _dataBase;
+
+        public ToDoManager(ToDoContext context)
+        {
+            _dataBase = context;
+        }
 
         public bool Create(ToDo entity)
         {
@@ -45,6 +50,11 @@ namespace DAL
             var entry = _dataBase.Entry(entity);
             entry.State = EntityState.Modified;
             return _dataBase.SaveChanges() > 0 ? true : false;
+        }
+
+        public void Dispose()
+        {
+            _dataBase.Dispose();
         }
     }
 }

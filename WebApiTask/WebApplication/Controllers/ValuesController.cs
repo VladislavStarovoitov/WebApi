@@ -1,4 +1,5 @@
 ﻿using DAL;
+using DAL.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +12,7 @@ namespace WebApplication.Controllers
 {
     public class ValuesController : ApiController
     {
-        private ToDoRepository _todoRepository = new ToDoRepository();
+        private UnitOfWork _unitOfWork = new UnitOfWork();
 
         [HttpPost]
         public IHttpActionResult Post([FromBody]ToDoModel todo)
@@ -20,10 +21,10 @@ namespace WebApplication.Controllers
             bool addResult = false;
             if (ModelState.IsValid)
             {
-                addResult = _todoRepository.Create(todo.ToOrmToDo());
+                addResult = _unitOfWork.ToDoManager.Create(todo.ToOrmToDo());
                 if (!addResult)
                 {
-                    return Ok(HttpStatusCode.InternalServerError);
+                    return InternalServerError();
                 }
             }
             
@@ -31,18 +32,21 @@ namespace WebApplication.Controllers
         }
 
         [HttpGet]
-        public IHttpActionResult GetAll() => Ok(_todoRepository.GetAll());
+        public IHttpActionResult GetAll()
+        {
+            return Ok(_unitOfWork.ToDoManager.GetAll());
+        }
 
         [HttpGet]
         public IHttpActionResult Get(int id)
         {
-            return Ok(_todoRepository.Get(id));
+            return Ok(_unitOfWork.ToDoManager.Get(id));
         }
 
         [HttpDelete]
         public IHttpActionResult Remove(int id)
         {
-            bool removeResult = _todoRepository.Remove(id);
+            bool removeResult = _unitOfWork.ToDoManager.Remove(id);
             if (!removeResult)
             {
                 return NotFound();
@@ -56,10 +60,10 @@ namespace WebApplication.Controllers
         {
             if (ModelState.IsValid)
             {
-                bool updateResult = _todoRepository.Update(todo.ToOrmToDo());
+                bool updateResult = _unitOfWork.ToDoManager.Update(todo.ToOrmToDo());
                 if (!updateResult)
                 {
-                    return Ok(HttpStatusCode.BadRequest);
+                    return BadRequest();
                 }                
             }
             return Ok();
